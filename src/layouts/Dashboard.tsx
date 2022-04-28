@@ -18,7 +18,7 @@ export const Dashboard: React.FC<Props> = (props) => {
 		setValue(newValue);
 	}
 
-    return <Paper elevation={5} sx={{ backgroundColor: "primary.main", padding: "2em" }}>
+    return <Paper elevation={18} sx={{ backgroundColor: "primary.main", padding: "2em" }}>
 		<Grid container spacing={4}>
 			<Grid item xs={2}>
 				<Box sx={{ display: 'flex', justifyContent: 'end' }}>

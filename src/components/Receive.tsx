@@ -5,7 +5,7 @@ type Props = {
 }
 
 export const Receive: React.FC<Props> = (props) => {
-    return <Card>
+    return <Card elevation={6}>
         <CardHeader 
             title={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>swap_horizontal</Icon> Receive Money</Typography>
