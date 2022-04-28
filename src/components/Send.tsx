@@ -21,6 +21,7 @@ export const Send: React.FC<Props> = (props) => {
                 id="search-recipients"
                 size="small"
                 options={props.recipients}
+                getOptionLabel={option => option.address}
                 sx={{ width: '100%' }}
                 popupIcon={<Icon>search</Icon>}
                 filterOptions={createFilterOptions({
