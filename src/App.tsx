@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { Avatar, Box, Button, Card, CardContent, CardHeader, Container, createTheme, Divider, Grid, Icon, Chip, Stack, TextField, Typography, Paper, Fab, Tabs, Tab } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, Container, createTheme, Divider, Grid, Icon, Chip, Stack, TextField, Typography, Paper, Fab, Tabs, Tab, IconButton } from '@mui/material';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
 import { ReactComponent as Logo } from './assets/logo.svg';
 import headshot from "./assets/avatar.jpg";
@@ -28,9 +28,10 @@ function App() {
     '19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw',
     'kl427JSD3jAS262adfomq1j0FkoPg3LEb2',
     '8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf',
-    '19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw',
-    'kl427JSD3jAS262adfomq1j0FkoPg3LEb2',
-    '8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf',
+    'g3LECSDnKyKvPg38ejAS2g3LE6asd23IOJ',
+    '427JSD3jAS262adfomq1j0FkoPg3LEb2af',
+    '9jJyiC6DnKyKvPg38eBE8R6yCSXLL123JI',
+    '9jJyiC6DnKAFvPg38eBE8R6yCSXLL123JI',
   ]
   return (
     <ThemeProvider theme={theme}>
@@ -63,10 +64,12 @@ function App() {
           }}>
             <Grid container spacing={4}>
               <Grid item xs={2}>
-                <Tabs orientation="vertical" value={0} >
-                  <Tab label={<Typography color="primary.contrastText">Account View</Typography>} />
-                  <Tab label={<Typography color="primary.contrastText">Exchange</Typography>} />
-                </Tabs>
+                <Box sx={{ display: 'flex' }}>
+                  <Tabs orientation="vertical" value={0}>
+                    <Tab label="Account View" />
+                    <Tab label={<Typography color="primary.contrastText">Exchange</Typography>}/>
+                  </Tabs>
+                </Box>
               {/* <TabPanel value={value} index={0}>
                 <Typography color="primary.contrastText">Account View</Typography>
               </TabPanel>
@@ -78,27 +81,32 @@ function App() {
                 <Stack direction="column" spacing={4}>
                   <Card>
                     <CardHeader 
-                      title={<Box sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between'
-                        }}>
-                          <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> Wallet Name</Typography>
-                          <Fab color="secondary" size="small"><Icon>edit</Icon></Fab>
-                        </Box>}
+                      title={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> My Wallet</Typography>
+                        <Fab color="secondary" size="small"><Icon>edit</Icon></Fab>
+                      </Box>}
+                      subheader={<Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
+                        <Typography>Address:</Typography>
+                        <Typography>19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw</Typography>
+                        <IconButton aria-label="copy" size="small">
+                          <Icon>content_copy</Icon>
+                        </IconButton>
+                      </Box>}
                     />
                     <Divider />
                     <CardContent>
                       <Grid container spacing={2}>
                         <Grid item xs={8}>
-                          <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center'
-                          }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <Chip label="Balance" size="small" />
-                            <Typography variant="h1"><Icon color="primary" sx={{ fontSize: "1em", verticalAlign: "middle" }}>currency_bitcoin</Icon>5,238.00</Typography>
-                            <Button color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1em' }}>
+                              <Typography color="secondary.dark" variant="h1">$5,000.00</Typography>
+                              <Typography variant="h2">BTC</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1em' }}>
+                              <Button color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>
+                              <Typography>(This is for testing purposes only!)</Typography>
+                            </Box>
                           </Box>
                         </Grid>
                         <Grid item xs={4}>
