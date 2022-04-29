@@ -25,7 +25,7 @@ export const Dashboard: React.FC<Props> = (props) => {
 					<Tabs orientation="vertical" indicatorColor="secondary" value={value} onChange={handleChange}>
 						{ props.tabs && props.tabs.map((tab, index) => {
 							return (
-								<Tab sx={{ textTransform: 'none', alignItems: 'end' }}
+								<Tab key={index} sx={{ textTransform: 'none', alignItems: 'end' }}
 									id={`vertical-tab-${index}`}
 									aria-controls={`vertical-tabpanel-${index}`}
 									label={<Typography color="secondary.light">
@@ -39,11 +39,11 @@ export const Dashboard: React.FC<Props> = (props) => {
 			</Grid>
 			<Grid item xs={10}>
 				{ props.tabPanels && props.tabPanels.map((tabPanel, index) => {
-					return <>
-						<TabPanel value={value} index={index}>
+					return (
+						<TabPanel key={index} value={value} index={index}>
 							{tabPanel.content}
 						</TabPanel>
-					</>
+					)
 				}) }
 			</Grid>
 		</Grid>

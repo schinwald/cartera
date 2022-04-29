@@ -1,22 +1,18 @@
 import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button } from "@mui/material"
+import { useState } from "react";
 import qrcode from "../assets/images/qr-code.png";
 import { Copy } from "./primitives";
+import { WalletType } from "../types";
 
-type Props = {
-    
-}
+type Props = WalletType;
 
 export const Wallet: React.FC<Props> = (props) => {
+
     return <Card elevation={6}>
         <CardHeader 
             title={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> My Wallet</Typography>
+                <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.name}</Typography>
                 <Fab color="secondary" size="small"><Icon>edit</Icon></Fab>
-            </Box>}
-            subheader={<Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
-                <Typography>Address:</Typography>
-                <Typography>19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw</Typography>
-                <Copy text="19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw" placement="right" />
             </Box>}
         />
         <Divider />
@@ -26,12 +22,17 @@ export const Wallet: React.FC<Props> = (props) => {
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
                     <Chip label="Balance" size="small" />
                     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1em' }}>
-                        <Typography color="secondary.dark" variant="h1">$5,000.00</Typography>
+                        <Typography color="secondary.dark" variant="h1">${props.balance}</Typography>
                         <Typography variant="h2">BTC</Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1em' }}>
-                        <Button color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>
-                        <Typography>(This is for testing purposes only!)</Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
+                            <Typography><Icon sx={{ verticalAlign: 'middle' }}>fingerprint</Icon>{props.address}</Typography>
+                            <Copy text={props.address} placement="right" />
+                        </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em', padding: "0.5em 0.5em" }}>
+                            <Button color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>
+                        </Box>
                     </Box>
                 </Box>
                 </Grid>

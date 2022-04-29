@@ -1,4 +1,5 @@
 export { Navigation } from './Navigation'
 export { Receive } from './Receive'
 export { Send } from './Send'
+export { WalletCollection } from './WalletCollection'
 export { Wallet } from './Wallet'
