@@ -1,8 +1,8 @@
 import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button } from "@mui/material"
 import { useState } from "react";
-import qrcode from "../assets/images/qr-code.png";
+import qrcode from "../../assets/images/qr-code.png";
 import { Copy } from "./primitives";
-import { WalletType } from "../types";
+import { WalletType } from "../../types";
 import AnimatedNumber from "react-awesome-animated-number";
 
 type Props = {

@@ -1,6 +1,6 @@
 import { Avatar, Box, Typography } from "@mui/material"
-import { ReactComponent as Logo } from '../assets/images/logo.svg';
-import headshot from "../assets/images/avatar.jpg";
+import { ReactComponent as Logo } from '../../assets/images/logo.svg';
+import headshot from "../../assets/images/avatar.jpg";
 
 type Props = {
     

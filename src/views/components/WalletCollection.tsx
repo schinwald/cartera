@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardContent, Icon, Divider, Box, Typography, Button } from "@mui/material"
 import { useState } from "react";
-import { WalletType } from "../types";
+import { WalletType } from "../../types";
 
 type Props = {
     wallets: WalletType[];

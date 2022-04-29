@@ -4,7 +4,8 @@ import { useState } from 'react';
 import './App.scss';
 import { Navigation, Receive, Send, WalletCollection, Wallet } from './components';
 import { Dashboard } from './layouts';
-import { WalletType } from "./types";
+import { WalletType } from "../types";
+import useSWR from 'swr';
 
 const theme = createTheme({
   palette: {
@@ -23,6 +24,8 @@ const theme = createTheme({
   },
 });
 
+const fetcher = (url: string) => fetch(url).then(res => res.json())
+
 function App() {
   const [wallets, setWallets] = useState<WalletType[]>([
     { name: "My Wallet 1", address: "19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw", balanceDollars: 5000, balanceCents: 0 },
@@ -32,6 +35,7 @@ function App() {
     { name: "My Wallet 5", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 6231, balanceCents: 62 },
   ])
   const [walletIndex, setWalletIndex] = useState<number>(0);
+  const { data, error } = useSWR('/address', fetcher);
 
   const onChangeActiveWallet = (index: number) => {
     setWalletIndex(index)
@@ -44,7 +48,6 @@ function App() {
       balanceDollars: 0,
       balanceCents: 0
     }
-    console.log("in")
     setWallets([...wallets, wallet])
   }
 
@@ -61,6 +64,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Container maxWidth={false} disableGutters={true} sx={{ height: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
         <Container maxWidth="lg">
+          { data && data.message }
           <Navigation />
           <Dashboard 
             tabs={[

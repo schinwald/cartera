@@ -6,7 +6,7 @@
   &::before {
     content: "";
     position: absolute;
-    background: url('./assets/images/background.png');
+    background: url('../assets/images/background.png');
     z-index: 1;
     width: 2000px;
     height: 2000px;
@@ -20,7 +20,7 @@
   &::after {
     content: "";
     position: absolute;
-    background: url('./assets/images/background.png');
+    background: url('../assets/images/background.png');
     z-index: 1;
     width: 2000px;
     height: 2000px;
