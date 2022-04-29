@@ -1,5 +1,6 @@
 export type WalletType = {
     name: string;
     address: string;
-    balance: number;
+    balanceDollars: number;
+    balanceCents: number;
 }

@@ -31,11 +31,11 @@ function App() {
   }
 
   let wallets: WalletType[] = [
-    { name: "My Wallet 1", address: "19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw", balance: 5000.00 },
-    { name: "My Wallet 2", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balance: 1234.56 },
-    { name: "My Wallet 3", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balance: 1254.65 },
-    { name: "My Wallet 4", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balance: 6213.52 },
-    { name: "My Wallet 5", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balance: 6213.52 },
+    { name: "My Wallet 1", address: "19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw", balanceDollars: 5000, balanceCents: 0 },
+    { name: "My Wallet 2", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 1234, balanceCents: 32 },
+    { name: "My Wallet 3", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 43672, balanceCents: 71 },
+    { name: "My Wallet 4", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 132, balanceCents: 33 },
+    { name: "My Wallet 5", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 6231, balanceCents: 62 },
   ]
 
   let recipients = [
@@ -55,7 +55,8 @@ function App() {
           <Dashboard 
             tabs={[
               { label: "Account View" },
-              { label: "Exchange" }
+              { label: "Send Money" },
+              { label: "Receive Money" }
             ]}
             tabPanels={[
               { content: 
@@ -67,9 +68,15 @@ function App() {
               },
               { content: 
                 <Stack direction="column" spacing={4}>
-                  <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Exchange</Typography>
+                  <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Send Money</Typography>
                   <WalletCollection wallets={wallets} onChangeWallet={onChangeWallet} />
                   <Send recipients={recipients}/>
+                </Stack>
+              },
+              { content: 
+                <Stack direction="column" spacing={4}>
+                  <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Receive Money</Typography>
+                  <WalletCollection wallets={wallets} onChangeWallet={onChangeWallet} />
                   <Receive />
                 </Stack>
               }

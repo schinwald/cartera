@@ -3,6 +3,7 @@ import { useState } from "react";
 import qrcode from "../assets/images/qr-code.png";
 import { Copy } from "./primitives";
 import { WalletType } from "../types";
+import AnimatedNumber from "react-awesome-animated-number";
 
 type Props = WalletType;
 
@@ -22,7 +23,33 @@ export const Wallet: React.FC<Props> = (props) => {
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
                     <Chip label="Balance" size="small" />
                     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1em' }}>
-                        <Typography color="secondary.dark" variant="h1">${props.balance}</Typography>
+                        <Typography color="secondary.dark" variant="h1" sx={{ display: 'flex' }}>
+                            $
+                            <AnimatedNumber value={props.balanceDollars}
+                                style={{
+                                    transition: '0.8s ease-out',
+                                    transitionProperty: 'background-color, color, opacity',
+                                    display: 'flex',
+                                    flexDirection: 'row-reverse',
+                                    overflowY: 'hidden',
+                                }}
+                                size={96}
+                                hasComma={true}
+                                duration={300}/>
+                            .
+                            <AnimatedNumber value={props.balanceCents}
+                                style={{
+                                    transition: '0.8s ease-out',
+                                    transitionProperty: 'background-color, color, opacity',
+                                    display: 'flex',
+                                    flexDirection: 'row-reverse',
+                                    overflowY: 'hidden',
+                                }}
+                                size={96}
+                                hasComma={false}
+                                minDigits={2}
+                                duration={300}/>
+                        </Typography>
                         <Typography variant="h2">BTC</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
