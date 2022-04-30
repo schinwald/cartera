@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardContent, Icon, Divider, Box, Typography, Button } from "@mui/material"
 import { styled } from "@mui/material/styles"
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { WalletType } from "../../types";
 
 const WalletButton = styled(Button)`
@@ -14,12 +14,31 @@ const WalletButton = styled(Button)`
 `;
 
 type Props = {
+    value: number,
     wallets: WalletType[];
     onChangeActiveWallet: (value: number) => void;
     onAddWallet?: () => void;
 }
 
 export const WalletCollection: React.FC<Props> = (props) => {
+    const walletButtonCSS = {
+        active: {
+            minWidth: '10rem',
+            width: '10rem',
+            minHeight: '5rem',
+            height: '5rem',
+            textTransform: 'none',
+            padding: '1em'
+        },
+        inactive: {
+            minWidth: '8rem',
+            width: '8rem',
+            minHeight: '4rem',
+            height: '4rem',
+            textTransform: 'none',
+            padding: '1em'
+        }
+    }
 
     return <Card elevation={6}>
         <CardHeader 
@@ -28,17 +47,17 @@ export const WalletCollection: React.FC<Props> = (props) => {
             </Box>}
         />
         <Divider />
-        <CardContent sx={{ overflowX: 'scroll', paddingLeft: 0, paddingRight: 0, paddingBottom: '16px' }}>
+        <CardContent sx={{ overflowX: 'scroll', overflowY: 'hidden', paddingLeft: 0, paddingRight: 0, paddingBottom: '16px', height: walletButtonCSS.active.height }}>
             <Box sx={{ display: 'flex', flexDirection: 'horizontal', gap: '1em', width: 'fit-content', padding: '0 1em' }}>
                 { props.wallets && props.wallets.map((wallet, index) => {
-                    return <WalletButton key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ textTransform: 'none', minWidth: '10rem', width: '10rem', minHeight: '5rem', height: '5rem', padding: '1em' }}>
+                    return <WalletButton key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ transition: 'all 0.2s ease-in-out', ...(props.value === index) ? walletButtonCSS.active : walletButtonCSS.inactive }}>
                         <Box sx={{ height: '100%', width: '100%' }}>
                             <Typography align="left" sx={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>{wallet.name}</Typography>
                         </Box>
                     </WalletButton>
                 }) }
                 { props.onAddWallet &&
-                    <Button onClick={() => props.onAddWallet!()} color="secondary" variant="outlined" sx={{ textTransform: 'none', minWidth: '10rem', width: '10rem', minHeight: '5rem', height: '5rem', padding: '1em' }}>
+                    <Button onClick={() => props.onAddWallet!()} color="secondary" variant="outlined" sx={{ ...walletButtonCSS.inactive }}>
                         <Icon sx={{ fontSize: "2rem" }}>add_box</Icon>
                     </Button>
                 }

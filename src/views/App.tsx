@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { Container, createTheme, Icon, Stack, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.scss';
 import { Navigation, Receive, Send, WalletCollection, Wallet } from './components';
 import { Dashboard } from './layouts';
@@ -68,14 +68,14 @@ const CustomizedContainer = styled(Container)`
 `
 
 function App() {
-  const [wallets, setWallets] = useState<WalletType[]>([
+  const [ wallets, setWallets ] = useState<WalletType[]>([
     { name: "My Wallet 1", address: "19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw", balanceDollars: 5000, balanceCents: 0 },
     { name: "My Wallet 2", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 1234, balanceCents: 32 },
     { name: "My Wallet 3", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 43672, balanceCents: 71 },
     { name: "My Wallet 4", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 132, balanceCents: 33 },
     { name: "My Wallet 5", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 6231, balanceCents: 62 },
   ])
-  const [walletIndex, setWalletIndex] = useState<number>(0);
+  const [ walletIndex, setWalletIndex ] = useState<number>(0);
   const { data, error } = useSWR('/address', fetcher);
 
   const onChangeActiveWallet = (index: number) => {
@@ -90,6 +90,7 @@ function App() {
       balanceCents: 0
     }
     setWallets([...wallets, wallet])
+    setWalletIndex(wallets.length)
   }
 
   let recipients = [
@@ -116,21 +117,21 @@ function App() {
               { content: 
                 <Stack direction="column" spacing={4}>
                   <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Account View</Typography>
-                  <WalletCollection wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} onAddWallet={onAddWallet} />
+                  <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} onAddWallet={onAddWallet} />
                   <Wallet wallet={wallets[walletIndex]} onRename={() => {}} onLoadMoney={() => {}} />
                 </Stack>
               },
               { content: 
                 <Stack direction="column" spacing={4}>
                   <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Send Money</Typography>
-                  <WalletCollection wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
+                  <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
                   <Send recipients={recipients}/>
                 </Stack>
               },
               { content: 
                 <Stack direction="column" spacing={4}>
                   <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Receive Money</Typography>
-                  <WalletCollection wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
+                  <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
                   <Receive />
                 </Stack>
               }
