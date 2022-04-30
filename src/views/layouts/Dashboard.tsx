@@ -1,6 +1,13 @@
+import { styled } from "@mui/material";
 import { Box, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { useState } from 'react';
 import { TabPanel } from '../components/primitives';
+
+const CustomPaper = styled(Paper)(
+	({ theme }) => `
+	background: ${theme.palette.primary.main + 'cf'};
+	background
+`)
 
 type Props = {
     tabs: {
@@ -18,7 +25,7 @@ export const Dashboard: React.FC<Props> = (props) => {
 		setValue(newValue);
 	}
 
-    return <Paper elevation={18} sx={{ backgroundColor: "primary.main", padding: "2em" }}>
+    return <CustomPaper elevation={18} sx={{ backgroundColor: "primary.main", padding: "2em" }}>
 		<Grid container spacing={4}>
 			<Grid item xs={2}>
 				<Box sx={{ display: 'flex', justifyContent: 'end' }}>
@@ -47,5 +54,5 @@ export const Dashboard: React.FC<Props> = (props) => {
 				}) }
 			</Grid>
 		</Grid>
-    </Paper>
+    </CustomPaper>
 }

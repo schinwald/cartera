@@ -1,6 +1,17 @@
 import { Card, CardHeader, CardContent, Icon, Divider, Box, Typography, Button } from "@mui/material"
+import { styled } from "@mui/material/styles"
 import { useState } from "react";
 import { WalletType } from "../../types";
+
+const WalletButton = styled(Button)`
+    position: relative;
+    &::before {
+        content: "";
+        position: absolute;
+        top: 60%; right: 0%; bottom: 20%; left: 0%;
+        background-color: black;
+    }
+`;
 
 type Props = {
     wallets: WalletType[];
@@ -20,11 +31,11 @@ export const WalletCollection: React.FC<Props> = (props) => {
         <CardContent sx={{ overflowX: 'scroll', paddingLeft: 0, paddingRight: 0, paddingBottom: '16px' }}>
             <Box sx={{ display: 'flex', flexDirection: 'horizontal', gap: '1em', width: 'fit-content', padding: '0 1em' }}>
                 { props.wallets && props.wallets.map((wallet, index) => {
-                    return <Button key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ textTransform: 'none', minWidth: '10rem', width: '10rem', minHeight: '5rem', height: '5rem', padding: '1em' }}>
+                    return <WalletButton key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ textTransform: 'none', minWidth: '10rem', width: '10rem', minHeight: '5rem', height: '5rem', padding: '1em' }}>
                         <Box sx={{ height: '100%', width: '100%' }}>
                             <Typography align="left" sx={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>{wallet.name}</Typography>
                         </Box>
-                    </Button>
+                    </WalletButton>
                 }) }
                 { props.onAddWallet &&
                     <Button onClick={() => props.onAddWallet!()} color="secondary" variant="outlined" sx={{ textTransform: 'none', minWidth: '10rem', width: '10rem', minHeight: '5rem', height: '5rem', padding: '1em' }}>

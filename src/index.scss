@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes animationBefore {
+  0% {
+    transform: translateX(-50%) translateY(50%) rotate(0deg) scale(100%);
+  }
+  50% {
+    transform: translateX(-50%) translateY(50%) rotate(180deg) scale(150%);
+  }
+  100% {
+    transform: translateX(-50%) translateY(50%) rotate(360deg) scale(100%);
+  }
+}
+
+@keyframes animationAfter {
+  0% {
+    transform: rotate(0deg) scale(300%);
+  }
+  50% {
+    transform: rotate(-180deg) scale(350%);
+  }
+  100% {
+    transform: rotate(-360deg) scale(300%);
+  }
+}

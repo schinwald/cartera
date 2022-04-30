@@ -5,7 +5,9 @@ import './App.scss';
 import { Navigation, Receive, Send, WalletCollection, Wallet } from './components';
 import { Dashboard } from './layouts';
 import { WalletType } from "../types";
+import background from '../assets/images/background.png';
 import useSWR from 'swr';
+import styled from '@emotion/styled';
 
 const theme = createTheme({
   palette: {
@@ -24,7 +26,46 @@ const theme = createTheme({
   },
 });
 
-const fetcher = (url: string) => fetch(url).then(res => res.json())
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
+const CustomizedContainer = styled(Container)`
+  position: relative;
+  overflow: clip;
+  z-index: 1;
+
+  &::before {
+    content: "";
+    position: fixed;
+    background: url('${background}');
+    z-index: 2;
+    width: 2000px;
+    height: 2000px;
+    opacity: 0.2;
+    bottom: 50%;
+    left: 50%;
+    transform: scale(100%);
+    animation: animationBefore 120s linear infinite;
+  }
+
+  &::after {
+    content: "";
+    position: fixed;
+    background: url('${background}');
+    z-index: 2;
+    width: 2000px;
+    height: 2000px;
+    opacity: 0.1;
+    bottom: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(50%) scale(300%);
+    animation: animationAfter 120s linear infinite;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 3;
+  }
+`
 
 function App() {
   const [wallets, setWallets] = useState<WalletType[]>([
@@ -62,9 +103,8 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth={false} disableGutters={true} sx={{ height: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
+      <CustomizedContainer maxWidth={false} disableGutters={true} sx={{ minHeight: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
         <Container maxWidth="lg">
-          { data && data.message }
           <Navigation />
           <Dashboard 
             tabs={[
@@ -97,7 +137,7 @@ function App() {
             ]}
           />
         </Container>
-      </Container>
+      </CustomizedContainer>
     </ThemeProvider>
   );
 }

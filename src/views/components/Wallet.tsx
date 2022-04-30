@@ -1,9 +1,35 @@
 import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button } from "@mui/material"
+import { styled } from "@mui/material"
 import { useState } from "react";
 import qrcode from "../../assets/images/qr-code.png";
 import { Copy } from "./primitives";
 import { WalletType } from "../../types";
 import AnimatedNumber from "react-awesome-animated-number";
+
+const CustomizedCard = styled(Card)(
+    ({ theme }) => `
+    position: relative;
+    &::before {
+        content: "";
+        z-index: 4;
+        position: absolute;
+        top: 0%; right: 0%; bottom: 0%; left: 0%;
+        background-color: ${theme.palette.primary.main};
+        opacity: 0.15;
+    }
+    &::after {
+        content: "";
+        position: absolute;
+        z-index: 4;
+        top: 0%; right: 0%; bottom: 0%; left: 0%;
+        clip-path: ellipse(100% 50% at 30% 15%);
+        background-color: rgba(255, 255, 255);
+    }
+    & > * {
+        position: relative;
+        z-index: 5;
+    }
+`)
 
 type Props = {
     wallet: WalletType;
@@ -21,8 +47,8 @@ export const Wallet: React.FC<Props> = (props) => {
             return <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.wallet.name}</Typography>
         }
     }
-
-    return <Card elevation={6}>
+    
+    return <CustomizedCard elevation={6}>
         <CardHeader 
             title={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 { renderEditable() }
@@ -35,7 +61,7 @@ export const Wallet: React.FC<Props> = (props) => {
                 <Grid item xs={8}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
                     <Chip label="Balance" size="small" />
-                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1em' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em' }}>
                         <Typography color="secondary.dark" variant="h1" sx={{ display: 'flex' }}>
                             $
                             <AnimatedNumber value={props.wallet.balanceDollars}
@@ -49,21 +75,25 @@ export const Wallet: React.FC<Props> = (props) => {
                                 size={96}
                                 hasComma={true}
                                 duration={300}/>
-                            .
-                            <AnimatedNumber value={props.wallet.balanceCents}
-                                style={{
-                                    transition: '0.8s ease-out',
-                                    transitionProperty: 'background-color, color, opacity',
-                                    display: 'flex',
-                                    flexDirection: 'row-reverse',
-                                    overflowY: 'hidden',
-                                }}
-                                size={96}
-                                hasComma={false}
-                                minDigits={2}
-                                duration={300}/>
                         </Typography>
-                        <Typography variant="h2">BTC</Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <Typography color="secondary.dark" variant="h4" sx={{ display: 'flex', lineHeight: '1' }}>
+                                .
+                                <AnimatedNumber value={props.wallet.balanceCents}
+                                    style={{
+                                        transition: '0.8s ease-out',
+                                        transitionProperty: 'background-color, color, opacity',
+                                        display: 'flex',
+                                        flexDirection: 'row-reverse',
+                                        overflowY: 'hidden',
+                                    }}
+                                    size={34}
+                                    hasComma={false}
+                                    minDigits={2}
+                                    duration={300}/>
+                            </Typography>
+                            <Typography variant="h4">BTC</Typography>
+                        </Box>
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
@@ -84,5 +114,5 @@ export const Wallet: React.FC<Props> = (props) => {
                 </Grid>
             </Grid>
         </CardContent>
-    </Card>
+    </CustomizedCard>
 }
