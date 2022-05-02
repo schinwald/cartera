@@ -1,4 +1,4 @@
-import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button } from "@mui/material"
+import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button, Paper } from "@mui/material"
 import { styled } from "@mui/material"
 import { useState } from "react";
 import qrcode from "../../assets/images/qr-code.png";
@@ -75,7 +75,7 @@ export const Wallet: React.FC<Props> = (props) => {
             <CardContent>
                 <Grid container spacing={2}>
                     <Grid item xs={8}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', gap: '1em' }}>
                         <Chip label="Balance" size="small" />
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em' }}>
                             <Typography color="secondary.dark" variant="h1" sx={{ display: 'flex' }}>
@@ -123,9 +123,11 @@ export const Wallet: React.FC<Props> = (props) => {
                     </Box>
                     </Grid>
                     <Grid item xs={4}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1em' }}>
                         <Chip label="QR Code" size="small" />
-                        <img alt="Sample QR Code" src={qrcode} width={256} height={256} />
+                        <Paper elevation={3}>
+                            <img alt="Sample QR Code" src={props.wallet.qrcode} width={256} height={256} />
+                        </Paper>
                     </Box>
                     </Grid>
                 </Grid>
