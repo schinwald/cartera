@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import './App.scss';
 import { Navigation, Receive, Send, WalletCollection, Wallet } from './components';
 import { Dashboard } from './layouts';
-import { WalletType } from "../types";
+import { WalletType, AddressType } from "../types";
 import background from '../assets/images/background.png';
 import useSWR from 'swr';
 import styled from '@emotion/styled';
@@ -68,75 +68,69 @@ const CustomizedContainer = styled(Container)`
 `
 
 function App() {
-  const [ wallets, setWallets ] = useState<WalletType[]>([
-    { name: "My Wallet 1", address: "19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw", balanceDollars: 5000, balanceCents: 0 },
-    { name: "My Wallet 2", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 1234, balanceCents: 32 },
-    { name: "My Wallet 3", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 43672, balanceCents: 71 },
-    { name: "My Wallet 4", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 132, balanceCents: 33 },
-    { name: "My Wallet 5", address: "8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf", balanceDollars: 6231, balanceCents: 62 },
-  ])
+  const [ wallets, setWallets ] = useState<WalletType[]>([]);
   const [ walletIndex, setWalletIndex ] = useState<number>(0);
-  const { data, error } = useSWR('/address', fetcher);
+  const [ recipients, setRecipients ] = useState<AddressType[]>([]);
+
+  const { data, error } = useSWR('/wallets', fetcher);
+
+  useEffect(() => {
+    if (data) {
+      setWallets([...data])
+    }
+  }, [ data ])
 
   const onChangeActiveWallet = (index: number) => {
     setWalletIndex(index)
   }
 
   const onAddWallet = () => {
-    const wallet: WalletType = {
-      name: `My Wallet ${wallets.length + 1}`,
-      address: "19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw",
-      balanceDollars: 0,
-      balanceCents: 0
-    }
-    setWallets([...wallets, wallet])
-    setWalletIndex(wallets.length)
+    // const wallet: WalletType = {
+    //   alias: `My Wallet ${wallets.length + 1}`,
+    //   addresses: [ "19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw" ],
+    //   balance: 0
+    // }
+    // setWallets([...wallets, wallet])
+    // setWalletIndex(wallets.length)
   }
-
-  let recipients = [
-    { address: 'kl427JSD3jAS262adfomq1j0FkoPg3LEb2' },
-    { address: '8R6yg3LECSDnKyKvPg38ejAS2g3LE62adf' },
-    { address: 'g3LECSDnKyKvPg38ejAS2g3LE6asd23IOJ' },
-    { address: '427JSD3jAS262adfomq1j0FkoPg3LEb2af' },
-    { address: '9jJyiC6DnKyKvPg38eBE8R6yCSXLL123JI' },
-    { address: '9jJyiC6DnKAFvPg38eBE8R6yCSXLL123JI' },
-  ]
 
   return (
     <ThemeProvider theme={theme}>
       <CustomizedContainer maxWidth={false} disableGutters={true} sx={{ minHeight: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
         <Container maxWidth="lg">
-          <Navigation />
-          <Dashboard 
-            tabs={[
-              { label: "Account View" },
-              { label: "Send Money" },
-              { label: "Receive Money" }
-            ]}
-            tabPanels={[
-              { content: 
-                <Stack direction="column" spacing={4}>
-                  <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Account View</Typography>
-                  <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} onAddWallet={onAddWallet} />
-                  <Wallet wallet={wallets[walletIndex]} onRename={() => {}} onLoadMoney={() => {}} />
-                </Stack>
-              },
-              { content: 
-                <Stack direction="column" spacing={4}>
-                  <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Send Money</Typography>
-                  <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
-                  <Send recipients={recipients}/>
-                </Stack>
-              },
-              { content: 
-                <Stack direction="column" spacing={4}>
-                  <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Receive Money</Typography>
-                  <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
-                  <Receive />
-                </Stack>
-              }
-            ]}
-          />
+          { wallets && wallets.length > 0 && <>
+            <Navigation />
+            <Dashboard 
+              tabs={[
+                { label: "Account View" },
+                { label: "Send Money" },
+                { label: "Receive Money" }
+              ]}
+              tabPanels={[
+                { content: 
+                  <Stack direction="column" spacing={4}>
+                    <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Account View</Typography>
+                    <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} onAddWallet={onAddWallet} />
+                    <Wallet wallet={wallets[walletIndex]} onRename={() => {}} onLoadMoney={() => {}} />
+                  </Stack>
+                },
+                { content: 
+                  <Stack direction="column" spacing={4}>
+                    <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Send Money</Typography>
+                    <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
+                    <Send recipients={recipients}/>
+                  </Stack>
+                },
+                { content: 
+                  <Stack direction="column" spacing={4}>
+                    <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Receive Money</Typography>
+                    <WalletCollection value={walletIndex} wallets={wallets} onChangeActiveWallet={onChangeActiveWallet} />
+                    <Receive />
+                  </Stack>
+                }
+              ]}
+            />
+          </>}
         </Container>
       </CustomizedContainer>
     </ThemeProvider>

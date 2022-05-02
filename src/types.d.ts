@@ -1,6 +1,13 @@
 export type WalletType = {
+    alias: string;
     name: string;
-    address: string;
-    balanceDollars: number;
-    balanceCents: number;
+    addresses: AddressType[];
+    balance: number;
+    updatedAt: Date;
+    createdAt: Date;
+}
+
+export type AddressType = {
+    value: string;
+    createdAt: Date;
 }

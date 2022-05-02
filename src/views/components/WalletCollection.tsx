@@ -1,6 +1,5 @@
 import { Card, CardHeader, CardContent, Icon, Divider, Box, Typography, Button } from "@mui/material"
 import { styled } from "@mui/material/styles"
-import { useRef, useState } from "react";
 import { WalletType } from "../../types";
 
 const WalletButton = styled(Button)`
@@ -52,7 +51,7 @@ export const WalletCollection: React.FC<Props> = (props) => {
                 { props.wallets && props.wallets.map((wallet, index) => {
                     return <WalletButton key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ transition: 'all 0.2s ease-in-out', ...(props.value === index) ? walletButtonCSS.active : walletButtonCSS.inactive }}>
                         <Box sx={{ height: '100%', width: '100%' }}>
-                            <Typography align="left" sx={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>{wallet.name}</Typography>
+                            <Typography align="left" sx={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>{wallet.alias}</Typography>
                         </Box>
                     </WalletButton>
                 }) }

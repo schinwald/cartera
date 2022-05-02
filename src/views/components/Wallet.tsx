@@ -39,15 +39,21 @@ type Props = {
 
 export const Wallet: React.FC<Props> = (props) => {
     const [editMode, setEditMode] = useState<boolean>(false);
+    console.log(props.wallet.addresses)
+    const activeAddress = props.wallet.addresses.reduce((previous, current, index) => {
+        if (index === 0) return previous
+        if (previous.createdAt > current.createdAt) return previous
+        else return current
+    })
     
     const renderEditable = () => {
         if (editMode) {
-            return <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.wallet.name}</Typography>
+            return <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.wallet.alias}</Typography>
         } else {
-            return <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.wallet.name}</Typography>
+            return <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.wallet.alias}</Typography>
         }
     }
-    
+
     return <CustomizedCard elevation={6}>
         <CardHeader 
             title={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -64,7 +70,7 @@ export const Wallet: React.FC<Props> = (props) => {
                     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em' }}>
                         <Typography color="secondary.dark" variant="h1" sx={{ display: 'flex' }}>
                             $
-                            <AnimatedNumber value={props.wallet.balanceDollars}
+                            <AnimatedNumber value={props.wallet.balance}
                                 style={{
                                     transition: '0.8s ease-out',
                                     transitionProperty: 'background-color, color, opacity',
@@ -79,7 +85,7 @@ export const Wallet: React.FC<Props> = (props) => {
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography color="secondary.dark" variant="h4" sx={{ display: 'flex', lineHeight: '1' }}>
                                 .
-                                <AnimatedNumber value={props.wallet.balanceCents}
+                                <AnimatedNumber value={0}
                                     style={{
                                         transition: '0.8s ease-out',
                                         transitionProperty: 'background-color, color, opacity',
@@ -97,8 +103,8 @@ export const Wallet: React.FC<Props> = (props) => {
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
-                            <Typography><Icon sx={{ verticalAlign: 'middle' }}>fingerprint</Icon>{props.wallet.address}</Typography>
-                            <Copy text={props.wallet.address} placement="right" />
+                            <Typography><Icon sx={{ verticalAlign: 'middle' }}>fingerprint</Icon>{activeAddress.value}</Typography>
+                            <Copy text={activeAddress.value} placement="right" />
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em', padding: "0.5em 0.5em" }}>
                             <Button color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>

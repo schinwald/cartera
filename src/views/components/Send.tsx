@@ -1,9 +1,8 @@
 import { Card, CardHeader, CardContent, Divider, Autocomplete, Typography, Box, Icon, Button, Grid, TextField, createFilterOptions } from "@mui/material"
+import { AddressType } from "../../types"
 
 type Props = {
-    recipients: {
-        address: string
-    }[]
+    recipients: AddressType[]
 }
 
 export const Send: React.FC<Props> = (props) => {
@@ -21,7 +20,7 @@ export const Send: React.FC<Props> = (props) => {
                 id="search-recipients"
                 size="small"
                 options={props.recipients}
-                getOptionLabel={option => option.address}
+                getOptionLabel={option => option.value}
                 sx={{ width: '100%' }}
                 popupIcon={<Icon>search</Icon>}
                 filterOptions={createFilterOptions({
@@ -30,7 +29,7 @@ export const Send: React.FC<Props> = (props) => {
                 })}
                 renderOption={(props, option) => (
                     <Box component="li" sx={{ '& > span': { marginRight: '0.5em' } }} {...props}>
-                        <Icon>fingerprint</Icon>{option.address}
+                        <Icon>fingerprint</Icon>{option.value}
                     </Box>
                 )}
                 renderInput={(params) => <TextField {...params} label="Search Recipients" />}
