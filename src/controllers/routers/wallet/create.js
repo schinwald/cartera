@@ -8,7 +8,7 @@ const Wallet = require("../../../models/wallet")
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.post("/", async (req, res) => {
     if (req.query.alias === undefined) {
         res.status(400).send()
         return

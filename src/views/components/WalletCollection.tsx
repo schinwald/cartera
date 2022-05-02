@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardContent, Icon, Divider, Box, Typography, Button } from "@mui/material"
 import { styled } from "@mui/material/styles"
+import useSWR from "swr";
 import { WalletType } from "../../types";
 
 const WalletButton = styled(Button)`
@@ -13,10 +14,10 @@ const WalletButton = styled(Button)`
 `;
 
 type Props = {
-    value: number,
     wallets: WalletType[];
+    activeWallet: number;
     onChangeActiveWallet: (value: number) => void;
-    onAddWallet?: () => void;
+    onCreateWallet?: () => void;
 }
 
 export const WalletCollection: React.FC<Props> = (props) => {
@@ -48,15 +49,15 @@ export const WalletCollection: React.FC<Props> = (props) => {
         <Divider />
         <CardContent sx={{ overflowX: 'scroll', overflowY: 'hidden', paddingLeft: 0, paddingRight: 0, paddingBottom: '16px', height: walletButtonCSS.active.height }}>
             <Box sx={{ display: 'flex', flexDirection: 'horizontal', gap: '1em', width: 'fit-content', padding: '0 1em' }}>
-                { props.wallets && props.wallets.map((wallet, index) => {
-                    return <WalletButton key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ transition: 'all 0.2s ease-in-out', ...(props.value === index) ? walletButtonCSS.active : walletButtonCSS.inactive }}>
+                { props.wallets && props.wallets.map((wallet: WalletType, index: number) => {
+                    return <WalletButton key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ transition: 'all 0.2s ease-in-out', ...(props.activeWallet === index) ? walletButtonCSS.active : walletButtonCSS.inactive }}>
                         <Box sx={{ height: '100%', width: '100%' }}>
                             <Typography align="left" sx={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>{wallet.alias}</Typography>
                         </Box>
                     </WalletButton>
                 }) }
-                { props.onAddWallet &&
-                    <Button onClick={() => props.onAddWallet!()} color="secondary" variant="outlined" sx={{ ...walletButtonCSS.inactive }}>
+                { props.onCreateWallet &&
+                    <Button onClick={() => props.onCreateWallet!()} color="secondary" variant="outlined" sx={{ ...walletButtonCSS.inactive }}>
                         <Icon sx={{ fontSize: "2rem" }}>add_box</Icon>
                     </Button>
                 }
