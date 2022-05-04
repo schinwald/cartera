@@ -14,7 +14,8 @@ const UserSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Wallet'
         }],
-        required: true
+        required: true,
+		default: []
     },
 	updatedAt: {
 		type: Date,

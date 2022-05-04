@@ -1,5 +1,7 @@
 export { Navigation } from './Navigation'
 export { Receive } from './Receive'
 export { Send } from './Send'
+export { TransactionHistory } from './TransactionHistory'
 export { WalletCollection } from './WalletCollection'
 export { Wallet } from './Wallet'
+export { QRCode } from './QRCode'

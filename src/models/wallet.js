@@ -13,14 +13,17 @@ const WalletSchema = new Schema({
     },
     balance: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
 	addresses: {
         type: [{
             type: Schema.Types.ObjectId,
-            ref: 'Address'
+            ref: 'Address',
+            required: true
         }],
-        required: true
+        required: true,
+        default: []
     },
     updatedAt: {
         type: Date,

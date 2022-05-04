@@ -1,10 +1,12 @@
 const express = require("express")
 const fetch = require("isomorphic-fetch")
+const { nextTick } = require("process")
 const uniqid = require("uniqid")
 
 // models
 const Address = require("../../../models/address")
 const Wallet = require("../../../models/wallet")
+
 
 const router = express.Router();
 
@@ -39,39 +41,41 @@ router.post("/", async (req, res) => {
             console.error(error)
             res.status(500).send()
         })
+    
+    // populate wallet model
+    const mongoWallet = new Wallet({
+        alias: req.query.alias,
+        name: fetchedWallet.name,
+        addresses: []
+    })
 
     // populate address model
-    const address = new Address({
+    const mongoAddress = new Address({
         value: fetchedAddress.address,
         keys: {
             private: fetchedAddress.private,
             public: fetchedAddress.public
-        }
+        },
+        balance: {
+            confirmed: 0,
+            pending: 0
+        },
+        owner: mongoWallet._id
     })
 
-    // populate wallet model
-    const wallet = new Wallet({
-        alias: req.query.alias,
-        name: fetchedWallet.name,
-        addresses: [ address._id ],
-        balance: 0
-    })
+    mongoWallet.addresses.push(mongoAddress._id)
 
     // save address to database
-    address.save(error => {
-        if (!error) {
-            console.log("Address Saved!")
-        } else {
+    mongoAddress.save(error => {
+        if (error) {
             console.error(error)
             res.status(500).send()
         }
     })
 
     // save address to database
-    wallet.save(error => {
-        if (!error) {
-            console.log("Wallet Saved!")
-        } else {
+    mongoWallet.save(error => {
+        if (error) {
             console.error(error)
             res.status(500).send()
         }

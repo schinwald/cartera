@@ -2,11 +2,10 @@ import { ThemeProvider } from '@emotion/react';
 import { Container, createTheme, Icon, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import './App.scss';
-import { Navigation, Receive, Send, WalletCollection, Wallet } from './components';
+import { Navigation, Receive, Send, WalletCollection, Wallet, TransactionHistory } from './components';
 import { Dashboard } from './layouts';
-import { WalletType, AddressType } from "../types";
 import background from '../assets/images/background.png';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import styled from '@emotion/styled';
 
 const theme = createTheme({
@@ -68,18 +67,24 @@ const CustomizedContainer = styled(Container)`
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 function App() {
-  const { data: wallets, mutate, error } = useSWR<WalletType[], any>('/wallets', fetcher);
+  const { mutate } = useSWRConfig()
+  const wallets: any = useSWR('/wallets', fetcher);
+  const addresses: any = useSWR('/addresses', fetcher);
   const [ walletIndex, setWalletIndex ] = useState<number>(0);
-  const [ recipients, setRecipients ] = useState<AddressType[]>([]);
 
   const onChangeActiveWallet = (index: number) => {
     setWalletIndex(index)
   }
 
   const onCreateWallet = async () => {
-    if (wallets) {
-      await fetch('/wallet/create?' + new URLSearchParams({ alias: `My Wallet ${wallets.length + 1}` }), { method: 'POST' })
-      mutate()
+    if (wallets.data) {
+      await fetch('/wallet/create?' + new URLSearchParams({ alias: `My Wallet ${wallets.data.length + 1}` }), {
+          method: 'POST'
+        })
+        .then(response => mutate('/wallets'))
+        .catch(error => {
+          console.error(error)
+        })
     }
   }
 
@@ -87,39 +92,43 @@ function App() {
     <ThemeProvider theme={theme}>
       <CustomizedContainer maxWidth={false} disableGutters={true} sx={{ minHeight: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
         <Container maxWidth="lg">
-          { wallets && <>
             <Navigation />
-            <Dashboard 
-              tabs={[
-                { label: "Account View" },
-                { label: "Send Money" },
-                { label: "Receive Money" }
-              ]}
-              tabPanels={[
-                { content: 
-                  <Stack direction="column" spacing={4}>
-                    <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Account View</Typography>
-                    <WalletCollection wallets={wallets} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} onCreateWallet={onCreateWallet} />
-                    <Wallet wallet={wallets[walletIndex]} onRename={() => {}} onLoadMoney={() => {}} />
-                  </Stack>
-                },
-                { content: 
-                  <Stack direction="column" spacing={4}>
-                    <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Send Money</Typography>
-                    <WalletCollection wallets={wallets} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
-                    <Send recipients={recipients}/>
-                  </Stack>
-                },
-                { content: 
-                  <Stack direction="column" spacing={4}>
-                    <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Receive Money</Typography>
-                    <WalletCollection wallets={wallets} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
-                    <Receive />
-                  </Stack>
-                }
-              ]}
-            />
-          </>}
+            { wallets.data &&
+              <Dashboard 
+                tabs={[
+                  { label: "Account View" },
+                  { label: "Send Money" },
+                  { label: "Receive Money" }
+                ]}
+                tabPanels={[
+                  { content: 
+                    <Stack direction="column" spacing={4}>
+                      <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Account View</Typography>
+                      <WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} onCreateWallet={onCreateWallet} />
+                      <Wallet wallet={wallets.data[walletIndex]} />
+                    </Stack>
+                  },
+                  { content: 
+                    <Stack direction="column" spacing={4}>
+                      <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Send Money</Typography>
+                      <WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
+                      { addresses.data && <>
+                        <Send recipients={addresses.data} />
+                        <TransactionHistory />
+                      </>}
+                    </Stack>
+                  },
+                  { content: 
+                    <Stack direction="column" spacing={4}>
+                      <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Receive Money</Typography>
+                      <WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
+                      <Receive />
+                      <TransactionHistory />
+                    </Stack>
+                  }
+                ]}
+              />
+            }
         </Container>
       </CustomizedContainer>
     </ThemeProvider>

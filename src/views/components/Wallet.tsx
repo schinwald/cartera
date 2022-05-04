@@ -1,11 +1,12 @@
 import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button, Paper } from "@mui/material"
 import { styled } from "@mui/material"
 import { useState } from "react";
-import qrcode from "../../assets/images/qr-code.png";
 import { Copy } from "./primitives";
 import { WalletType, AddressType } from "../../types";
 import AnimatedNumber from "react-awesome-animated-number";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from 'swr';
+import fetch from 'isomorphic-fetch';
+import { QRCode } from ".";
 
 const CustomizedCard = styled(Card)(
     ({ theme }) => `
@@ -34,11 +35,12 @@ const CustomizedCard = styled(Card)(
 
 type Props = {
     wallet: WalletType;
-    onRename: (value: string) => void;
-    onLoadMoney: (value: number) => void;
 }
 
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 export const Wallet: React.FC<Props> = (props) => {
+    const { mutate } = useSWRConfig();
     let [ editMode, setEditMode ] = useState<boolean>(false);
     let activeAddress: AddressType | null = null;
 
@@ -48,6 +50,29 @@ export const Wallet: React.FC<Props> = (props) => {
             if (previous.createdAt > current.createdAt) return previous
             else return current
         })
+    }
+
+    const onLoadMoney = (value: number) => {
+        if (activeAddress) {
+            fetch('/wallet/load', {
+                    method: 'POST',
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    }),
+                    body: JSON.stringify({
+                        address: activeAddress.value,
+                        amount: value
+                    })
+                })
+                .then((response: any) => {
+                    mutate('/wallets')
+                    return response.json()
+                })
+                .then((data: any) => {})
+                .catch((error: any) => {
+
+                })
+        }
     }
 
     return ( 
@@ -80,7 +105,11 @@ export const Wallet: React.FC<Props> = (props) => {
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em' }}>
                             <Typography color="secondary.dark" variant="h1" sx={{ display: 'flex' }}>
                                 $
-                                <AnimatedNumber value={props.wallet.balance}
+                                <AnimatedNumber
+                                    value={
+                                        props.wallet.addresses.map(address => address.balance.confirmed + address.balance.pending)
+                                            .reduce((previous, current) => previous += current)
+                                    }
                                     style={{
                                         transition: '0.8s ease-out',
                                         transitionProperty: 'background-color, color, opacity',
@@ -108,7 +137,7 @@ export const Wallet: React.FC<Props> = (props) => {
                                         minDigits={2}
                                         duration={300}/>
                                 </Typography>
-                                <Typography variant="h4">BTC</Typography>
+                                <Typography variant="h4">BCY</Typography>
                             </Box>
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -117,7 +146,7 @@ export const Wallet: React.FC<Props> = (props) => {
                                 <Copy text={activeAddress.value} placement="right" />
                             </Box>
                             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em', padding: "0.5em 0.5em" }}>
-                                <Button color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>
+                                <Button onClick={() => { onLoadMoney(1000) }} color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>
                             </Box>
                         </Box>
                     </Box>
@@ -126,7 +155,7 @@ export const Wallet: React.FC<Props> = (props) => {
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1em' }}>
                         <Chip label="QR Code" size="small" />
                         <Paper elevation={3}>
-                            <img alt="Sample QR Code" src={props.wallet.qrcode} width={256} height={256} />
+                            <QRCode data={activeAddress.value} alt={`QR Code of address: ${activeAddress.value}`} size={256} />
                         </Paper>
                     </Box>
                     </Grid>

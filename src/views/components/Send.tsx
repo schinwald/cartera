@@ -6,6 +6,7 @@ type Props = {
 }
 
 export const Send: React.FC<Props> = (props) => {
+
     return <Card elevation={6}>
         <CardHeader 
             title={<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -15,35 +16,35 @@ export const Send: React.FC<Props> = (props) => {
         <Divider />
         <CardContent>
             <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <Autocomplete
-                id="search-recipients"
-                size="small"
-                options={props.recipients}
-                getOptionLabel={option => option.value}
-                sx={{ width: '100%' }}
-                popupIcon={<Icon>search</Icon>}
-                filterOptions={createFilterOptions({
-                    matchFrom: "start",
-                    limit: 10
-                })}
-                renderOption={(props, option) => (
-                    <Box component="li" sx={{ '& > span': { marginRight: '0.5em' } }} {...props}>
-                        <Icon>fingerprint</Icon>{option.value}
+                <Grid item xs={12}>
+                    <Autocomplete
+                        id="search-recipients"
+                        size="small"
+                        options={props.recipients}
+                        getOptionLabel={option => option.value}
+                        sx={{ width: '100%' }}
+                        popupIcon={<Icon>search</Icon>}
+                        filterOptions={createFilterOptions({
+                            matchFrom: "start",
+                            limit: 10
+                        })}
+                        renderOption={(props, option) => (
+                            <Box component="li" sx={{ '& > span': { marginRight: '0.5em' } }} {...props}>
+                                <Icon>fingerprint</Icon>{option.value}
+                            </Box>
+                        )}
+                        renderInput={(params) => <TextField {...params} label="Search Recipients" />}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{
+                    display: 'inline-flex',
+                    gap: '1em',
+                    }}>
+                    <TextField variant="standard" />
+                    <Button color="secondary" variant="contained" endIcon={<Icon>arrow_forward</Icon>}>Send</Button>
                     </Box>
-                )}
-                renderInput={(params) => <TextField {...params} label="Search Recipients" />}
-                />
-            </Grid>
-            <Grid item xs={12}>
-                <Box sx={{
-                display: 'inline-flex',
-                gap: '1em',
-                }}>
-                <TextField variant="standard" />
-                <Button color="secondary" variant="contained" endIcon={<Icon>arrow_forward</Icon>}>Send</Button>
-                </Box>
-            </Grid>
+                </Grid>
             </Grid>
         </CardContent>
     </Card>
