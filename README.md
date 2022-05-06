@@ -1,3 +1,48 @@
+![Cartera](/logo.svg)
+
+## Description
+
+A cryptocurrency wallet manager that streamlines transactions, removes barriers, and emphasizes transparency without compromising security. This is a proof of concept which was tested using the BlockCypher API on the BCY.test chain. Some of the key features include:
+- [x] Consolidates wallet addresses
+- [ ] Wallet alias renaming
+- [x] Generates QR Codes for available wallet addresses
+- [x] Exchanging cryptocurrencies
+- [x] Transaction viewing
+
+## Preview
+
+None
+
+## Learning Outcomes
+
+- BlockCypher
+    - It is a good idea to remove private keys from a server after a certain period of time
+    - Addresses should not be used repeatedly to avoid transaction tracking
+    - Transaction signing uses the Elliptic Curve Digital Signing Algorithm (ECDSA)
+    - Polling should be separated from frontend and backend to avoid excessive API calls
+    - Transactions consume the entire balance of the sender's address and then refund excess funds
+    - Fees are included in each transaction (presumably given to miners)
+- Express
+    - Next function doesn't exit router or middleware logic
+    - Finalizing a response doesn't exit router or middleware logic
+- Mongoose
+    - Is an Object Document Mapper (ODM)
+    - Allows you to use Mongodb easily with JavaScript
+- SWR (stale-while-revalidate)
+    - Cached fetches allow you to fetch data within child components without additional fetches
+    - Interval fetches are great for polling
+    - Mutations can trigger new fetches
+    - Easily updates data and by extension react components
+- Material UI
+    - A great tool for generating responsive and nice looking react components
+    - Streamlines themes so that you can use dark mode easily using a context provider
+    - Creating custom style components is really easy
+- React
+    - useImperativeHandle is a great option for exposing react component ref methods
+- User Interface
+    - Rotating background images are really effective
+    - Oppositely rotating mitigates vertigo
+
 ## Available Scripts
 
 In the project directory, you can run:
