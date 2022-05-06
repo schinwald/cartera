@@ -4,7 +4,7 @@ const Address = require("../../../models/address")
 async function Create(req, res, next) {
     if (res.locals.wallet === undefined) {
         res.status(400).send()
-        next()
+        next('error')
     }
 
     // generate unique address from API

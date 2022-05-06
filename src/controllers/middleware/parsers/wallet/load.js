@@ -1,6 +1,3 @@
-const Wallet = require("../../../../models/wallet")
-const Address = require("../../../../models/address")
-
 async function Load(req, res, next) {
     if (req.body.address === undefined || req.body.amount === undefined) {
         res.status(400).send()

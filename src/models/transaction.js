@@ -7,6 +7,11 @@ const TransactionSchema = new Schema({
         type: String,
         required: true
     },
+    fees: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     confirmations: {
         type: Number,
         required: true
@@ -42,6 +47,11 @@ const TransactionSchema = new Schema({
         }],
         required: true,
         default: []
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: () => Date.now()
     }
 })
 

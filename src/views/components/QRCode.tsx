@@ -2,6 +2,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import sample1 from '../../assets/images/qrcode-1.png' 
 import sample2 from '../../assets/images/qrcode-2.png' 
 import fetch from 'isomorphic-fetch';
+import { useQRCode } from '../hooks';
 
 type Props = {
     data?: string;
@@ -9,10 +10,8 @@ type Props = {
     size: number;
 }
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
-
 export const QRCode: React.FC<Props> = (props) => {
-    const qrcode: any = useSWR(props.data ? "/qrcode?" + new URLSearchParams({ data: props.data }) : null, fetcher);
+    const qrcode: any = useQRCode(props.data)
 
     return (
         qrcode.data

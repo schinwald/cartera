@@ -2,27 +2,30 @@ import { ThemeProvider } from '@emotion/react';
 import { Container, createTheme, Icon, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import './App.scss';
-import { Navigation, Receive, Send, WalletCollection, Wallet, TransactionHistory } from './components';
+import { Navigation, Exchange, WalletCollection, Wallet, Transactions } from './components';
 import { Dashboard } from './layouts';
 import background from '../assets/images/background.png';
-import useSWR, { useSWRConfig } from 'swr';
+import { useSWRConfig } from 'swr';
 import styled from '@emotion/styled';
+import { AddressType, TransactionType } from '../types';
+import { useWallets, useAddresses } from './hooks';
+import { receiveMessageOnPort } from 'worker_threads';
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      light: "#f3e5f5",
-      main: "#824e94",
-      dark: "#610980",
-      contrastText: "#ffffff"
-    },
-    secondary: {
-      light: "#ffb74d",
-      main: "#ffa726",
-      dark: "#f57c00",
-      contrastText: "#000000"
-    },
-  },
+	palette: {
+		primary: {
+			light: "#e5dce8",
+			main: "#824e94",
+			dark: "#610980",
+			contrastText: "#ffffff"
+		},
+		secondary: {
+			light: "#fffaf2",
+			main: "#ffa726",
+			dark: "#f57c00",
+			contrastText: "#000000"
+		},
+	},
 });
 
 const CustomizedContainer = styled(Container)`
@@ -67,72 +70,131 @@ const CustomizedContainer = styled(Container)`
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 function App() {
-  const { mutate } = useSWRConfig()
-  const wallets: any = useSWR('/wallets', fetcher);
-  const addresses: any = useSWR('/addresses', fetcher);
-  const [ walletIndex, setWalletIndex ] = useState<number>(0);
+	const { mutate } = useSWRConfig()
+	const wallets: any = useWallets()
+	const addresses: any = useAddresses()
+	const [walletIndex, setWalletIndex] = useState<number>(0);
 
-  const onChangeActiveWallet = (index: number) => {
-    setWalletIndex(index)
-  }
+	if (wallets.data) {
+		for (let wallet of wallets.data) {
+			// consolidate balances to individual wallets
+			wallet.balance = wallet.addresses.map((address: AddressType) => address.balance)
+				.reduce((previous: any, current: any, index: number) => {
+					if (index === 0) return {...previous}
+					return {
+						confirmed: previous.confirmed + current.confirmed,
+						pending: previous.pending + current.pending
+					}
+				})
 
-  const onCreateWallet = async () => {
-    if (wallets.data) {
-      await fetch('/wallet/create?' + new URLSearchParams({ alias: `My Wallet ${wallets.data.length + 1}` }), {
-          method: 'POST'
-        })
-        .then(response => mutate('/wallets'))
-        .catch(error => {
-          console.error(error)
-        })
-    }
-  }
+			// consolidate transactions to individual wallets
+			wallet.transactions = wallet.addresses.map((address: AddressType) => {
+					for (const transaction of address.transactions) {
+						for (const receiver of transaction.receivers) {
+							if (address.value === receiver.address.value) {
+								receiver.address.owned = true
+							} else {
+								receiver.address.owned = false
+							}
+						}
+						for (const sender of transaction.senders) {
+							if (address.value === sender.address.value) {
+								sender.address.owned = true
+							} else {
+								sender.address.owned = false
+							}
+						}
+					}
+					return address.transactions
+				})
+				.reduce((previous: TransactionType[], current: TransactionType[], index: number) => {
+					if (index === 0) return [...previous];
+					return [...previous, ...current]
+        		})
+				.sort((a: TransactionType, b: TransactionType) => a.ref.localeCompare(b.ref))
+				.filter((transaction: TransactionType, index: number, transactions: TransactionType[]) => {
+					if (index === 0) return true
+					if (transactions[index - 1].ref !== transactions[index].ref) return true
+					// transfer owned statuses to previous before dissolving
+					for (let r in transactions[index].receivers) {
+						if (transactions[index].receivers[r].address.owned === true) {
+							transactions[index - 1].receivers[r].address.owned = true
+						}
+					}
+					for (let r in transactions[index].senders) {
+						if (transactions[index].senders[r].address.owned === true) {
+							transactions[index - 1].senders[r].address.owned = true
+						}
+					}
+					return false
+				})
 
-  return (
-    <ThemeProvider theme={theme}>
-      <CustomizedContainer maxWidth={false} disableGutters={true} sx={{ minHeight: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
-        <Container maxWidth="lg">
-            <Navigation />
-            { wallets.data &&
-              <Dashboard 
-                tabs={[
-                  { label: "Account View" },
-                  { label: "Send Money" },
-                  { label: "Receive Money" }
-                ]}
-                tabPanels={[
-                  { content: 
-                    <Stack direction="column" spacing={4}>
-                      <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Account View</Typography>
-                      <WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} onCreateWallet={onCreateWallet} />
-                      <Wallet wallet={wallets.data[walletIndex]} />
-                    </Stack>
-                  },
-                  { content: 
-                    <Stack direction="column" spacing={4}>
-                      <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Send Money</Typography>
-                      <WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
-                      { addresses.data && <>
-                        <Send recipients={addresses.data} />
-                        <TransactionHistory />
-                      </>}
-                    </Stack>
-                  },
-                  { content: 
-                    <Stack direction="column" spacing={4}>
-                      <Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Receive Money</Typography>
-                      <WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
-                      <Receive />
-                      <TransactionHistory />
-                    </Stack>
-                  }
-                ]}
-              />
-            }
-        </Container>
-      </CustomizedContainer>
-    </ThemeProvider>
-  );
+			
+		}
+	}
+
+	const onChangeActiveWallet = (index: number) => {
+		setWalletIndex(index)
+	}
+
+	const onCreateWallet = async () => {
+		if (wallets.data) {
+			await fetch('/wallet/create?' + new URLSearchParams({ alias: `My Wallet ${wallets.data.length + 1}` }), {
+					method: 'POST'
+				})
+				.then(response => mutate('/wallets'))
+				.catch(error => {
+					console.error(error)
+				})
+		}
+	}
+
+	return (
+		<ThemeProvider theme={theme}>
+			<CustomizedContainer maxWidth={false} disableGutters={true} sx={{ minHeight: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
+				<Container maxWidth="lg">
+					<Navigation />
+					{wallets.data &&
+						<Dashboard
+							tabs={[
+								{ label: "Account" },
+								{ label: "Exchange" },
+								{ label: "History" }
+							]}
+							tabPanels={[
+								{
+									content:
+										<Stack direction="column" spacing={4}>
+											<Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Account</Typography>
+											<WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} onCreateWallet={onCreateWallet} />
+											<Wallet wallet={wallets.data[walletIndex]} />
+										</Stack>
+								},
+								{
+									content:
+										<Stack direction="column" spacing={4}>
+											<Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> Exchange</Typography>
+											<WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
+											{ addresses.data && <>
+												<Exchange wallet={wallets.data[walletIndex]} recipients={addresses.data} />
+											</> }
+										</Stack>
+								},
+								{
+									content:
+										<Stack direction="column" spacing={4}>
+											<Typography color="primary.contrastText" variant="h4" sx={{ borderBottom: '1px solid' }}><Icon fontSize="large" sx={{ verticalAlign: 'middle', fontSize: '1.6em' }}>double_arrow</Icon> History</Typography>
+											<WalletCollection wallets={wallets.data} activeWallet={walletIndex} onChangeActiveWallet={onChangeActiveWallet} />
+											<Transactions wallet={wallets.data[walletIndex]} />
+										</Stack>
+								}
+							]}
+						/>
+					}
+				</Container>
+			</CustomizedContainer>
+		</ThemeProvider>
+	);
 }
 
 export default App;

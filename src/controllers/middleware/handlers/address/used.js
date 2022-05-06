@@ -2,10 +2,11 @@ const Wallet = require("../../../../models/wallet")
 const Address = require("../../../../models/address")
 
 async function Used(req, res, next) {
-    if (res.locals.used === false || res.locals.used === undefined) next()
+    if (res.locals.used === undefined || res.locals.used === false) return
 
     // find address information
-    const mongoAddressOld = await Address.findOne({ value: res.locals.address }, { owner: 1 }).populate('owner', { name: 1 })
+    const mongoAddressOld = await Address.findOne({ value: res.locals.address }).populate('owner', { name: 1 })
+    mongoAddressOld.used = true
 
     // generate unique address from API
     const fetchedAddress = await fetch(`https://api.blockcypher.com/v1/${process.env.BLOCKCYPHER_COIN}/${process.env.BLOCKCYPHER_CHAIN}/addrs`, {
@@ -44,11 +45,23 @@ async function Used(req, res, next) {
             private: fetchedAddress.private,
             public: fetchedAddress.public
         },
+        balance: {
+            confirmed: 0,
+            pending: 0
+        },
         owner: mongoWallet._id
     })
 
     // push new address to wallet
     mongoWallet.addresses.push(mongoAddressNew)
+
+    // save address to database
+    mongoAddressOld.save(error => {
+        if (error) {
+            res.status(500).send()
+            next(error)
+        }
+    })
 
     // save address to database
     mongoAddressNew.save(error => {

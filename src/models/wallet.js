@@ -11,11 +11,6 @@ const WalletSchema = new Schema({
         type: String,
         required: true
     },
-    balance: {
-        type: Number,
-        required: true,
-        default: 0
-    },
 	addresses: {
         type: [{
             type: Schema.Types.ObjectId,

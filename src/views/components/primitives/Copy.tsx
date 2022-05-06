@@ -33,7 +33,7 @@ export const Copy: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <Popper open={open} anchorEl={ref.current} placement={props.placement} transition sx={{ zIndex: 1 }}>
             {({ TransitionProps }) => (
                 <Fade {...TransitionProps} timeout={350}>
-                    <Paper color="primary.main">
+                    <Paper>
                         <Typography sx={{ p: 1 }}>Copied!</Typography>
                     </Paper>
                 </Fade>

@@ -1,30 +1,45 @@
 export type WalletType = {
     alias: string;
     name: string;
+    balance?: {
+        confirmed: number;
+        pending: number;
+    }
+    transactions?: TransactionType[],
     addresses: AddressType[];
-    createdAt: Date;
+    updatedAt: number;
+    createdAt: number;
 }
 
 export type AddressType = {
     value: string;
-    qrcode: string;
+    qrcode?: string;
     balance: {
         confirmed: number;
         pending: number;
     };
+    used: boolean;
     transactions: TransactionType[];
-    createdAt: Date;
+    createdAt: number;
 }
 
 export type TransactionType = {
-    confirmed: boolean;
+    ref: string;
+    fees: number;
+    confirmations: number;
     senders: {
-        address: string;
+        address: {
+            value: string;
+            owned?: boolean;
+        },
         amount: string;
     }[];
     receivers: {
-        address: string;
+        address: {
+            value: string;
+            owned?: boolean;
+        },
         amount: string;
     }[];
-    createdAt: Date;
+    createdAt: number;
 }

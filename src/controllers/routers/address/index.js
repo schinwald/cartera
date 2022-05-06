@@ -8,7 +8,8 @@ const router = express.Router();
 router.get("/:address", async (req, res) => {
     let mongoAddress = await Address.findOne({ value: req.params.address }).populate('transactions')
 
-    if (mongoAddress === null || Date.now() - mongoAddress.updatedAt().getTime() > 30) {
+    // fetch address from API if it doesn't exist in our database or if it is stale
+    if (mongoAddress === null || Date.now() - mongoAddress.updatedAt().getTime() > 180000) {
         // fetch address
         const fetchedAddress = await fetch(`https://api.blockcypher.com/v1/${process.env.BLOCKCYPHER_COIN}/${process.env.BLOCKCYPHER_CHAIN}/addrs/${req.params.address}`, {
                 method: 'GET',

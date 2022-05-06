@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     // get all addresses in database
-    const mongoAddresses = await Address.find({}, { _id: 0, __v: 0 })
-    res.status(200).send(mongoAddresses === null ? [] : [...mongoAddresses])
+    const mongoAddresses = await Address.find({}, { value: 1 }).lean()
+    res.status(200).send(mongoAddresses === null ? [] : mongoAddresses.map(mongoAddress => mongoAddress.value))
 });
 
 module.exports = router

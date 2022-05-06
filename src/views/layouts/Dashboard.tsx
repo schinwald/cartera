@@ -35,7 +35,7 @@ export const Dashboard: React.FC<Props> = (props) => {
 								<Tab key={index} sx={{ textTransform: 'none', alignItems: 'end' }}
 									id={`vertical-tab-${index}`}
 									aria-controls={`vertical-tabpanel-${index}`}
-									label={<Typography color="secondary.light">
+									label={<Typography color="secondary">
 										{tab.label}
 									</Typography>}
 								/>
