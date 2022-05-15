@@ -50,7 +50,7 @@ export const WalletCollection: React.FC<Props> = (props) => {
         <CardContent sx={{ overflowX: 'scroll', overflowY: 'hidden', paddingLeft: 0, paddingRight: 0, paddingBottom: '16px', height: walletButtonCSS.active.height }}>
             <Box sx={{ display: 'flex', flexDirection: 'horizontal', gap: '1em', width: 'fit-content', padding: '0 1em' }}>
                 { props.wallets && props.wallets.map((wallet: WalletType, index: number) => {
-                    return <WalletButton key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ transition: 'all 0.2s ease-in-out', ...(props.activeWallet === index) ? walletButtonCSS.active : walletButtonCSS.inactive }}>
+                    return <WalletButton disabled={wallet.name ? false : true} key={index} onClick={() => props.onChangeActiveWallet(index)} color="secondary" variant="contained" sx={{ transition: 'all 0.2s ease-in-out', ...(props.activeWallet === index) ? walletButtonCSS.active : walletButtonCSS.inactive }}>
                         <Box sx={{ height: '100%', width: '100%' }}>
                             <Typography align="left" sx={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>{wallet.alias}</Typography>
                         </Box>

@@ -7,7 +7,7 @@ type Props = {
 }
 
 export const Copy: React.FC<React.PropsWithChildren<Props>> = (props) => {
-    let ref = useRef<HTMLButtonElement | null>(null);
+    let ref = useRef<HTMLButtonElement>(null);
     const [open, setOpen] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
 
@@ -30,11 +30,21 @@ export const Copy: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <IconButton ref={ref} aria-label="copy" size="small" onClick={onClick}>
             <Icon>content_copy</Icon>
         </IconButton>
-        <Popper open={open} anchorEl={ref.current} placement={props.placement} transition sx={{ zIndex: 1 }}>
+        <Popper 
+            open={open}
+            anchorEl={ref.current}
+            placement={props.placement}
+            disablePortal={true}
+            modifiers={[{
+                name: 'arrow',
+                enabled: true
+            }]}
+            transition
+            sx={{ zIndex: 1 }}>
             {({ TransitionProps }) => (
                 <Fade {...TransitionProps} timeout={350}>
-                    <Paper>
-                        <Typography sx={{ p: 1 }}>Copied!</Typography>
+                    <Paper sx={{ padding: '0.5em' }}>
+                        <Typography>Copied!</Typography>
                     </Paper>
                 </Fade>
             )}

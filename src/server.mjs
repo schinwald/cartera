@@ -4,6 +4,7 @@ dotenv.config()
 import express from "express"
 import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 
 // routers
 import renderHomePage from "./controllers/routers/index.js"
@@ -34,6 +35,7 @@ await mongoose.connect('mongodb://localhost/test');
 // setup router endpoints
 const app = express();
 
+app.use(cors()) // enable cors for each endpoint
 app.use("/", renderHomePage);
 app.use("/wallet/create", createWallet);
 app.use("/wallet/load", bodyParser.json(), loadWalletParser, faucetAddressHandler, saveTransactionHandler, usedAddressHandler, loadWallet);

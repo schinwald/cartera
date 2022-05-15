@@ -7,27 +7,30 @@ import AnimatedNumber from "react-awesome-animated-number";
 import useSWR, { useSWRConfig } from 'swr';
 import fetch from 'isomorphic-fetch';
 import { QRCode } from ".";
+import { LoadingButton } from "@mui/lab";
 
 type Props = {
     wallet?: WalletType;
 }
 
 export const Wallet: React.FC<Props> = (props) => {
-    const { mutate } = useSWRConfig();
-    let [ editMode, setEditMode ] = useState<boolean>(false);
-    let activeAddress: AddressType | null = null;
+    const { mutate } = useSWRConfig()
+    let [ editMode, setEditMode ] = useState<boolean>(false)
+    let [ loading, setLoading ] = useState<boolean>(false)
+    let activeAddress: AddressType | null = null
 
     if (props.wallet) {
-        activeAddress = props.wallet.addresses.reduce((previous, current, index) => {
-            if (index === 0) return previous
+        activeAddress = props.wallet.addresses?.reduce((previous, current, index) => {
+            if (index === 0) return current
             if (previous.createdAt > current.createdAt) return previous
             else return current
         })
     }
 
-    const onLoadMoney = (value: number) => {
+    const onLoadMoney = async (value: number) => {
         if (activeAddress) {
-            fetch('/wallet/load', {
+            setLoading(true)
+            await fetch('/wallet/load', {
                     method: 'POST',
                     headers: new Headers({
                         'Content-Type': 'application/json'
@@ -40,12 +43,11 @@ export const Wallet: React.FC<Props> = (props) => {
                 .then((response: any) => {
                     mutate('/wallets')
                     mutate('/addresses')
-                    return response.json()
                 })
-                .then((data: any) => {})
                 .catch((error: any) => {
 
                 })
+            setLoading(false)
         }
     }
 
@@ -103,7 +105,7 @@ export const Wallet: React.FC<Props> = (props) => {
                                     <Copy text={activeAddress.value} placement="right" />
                                 </Box>
                                 <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5em', padding: "0.5em 0.5em" }}>
-                                    <Button onClick={() => { onLoadMoney(100000) }} color="secondary" variant="contained" startIcon={<Icon>receipt</Icon>}>Load Money</Button>
+                                    <LoadingButton onClick={() => onLoadMoney(100000)} loading={loading} loadingPosition="start" startIcon={<Icon>receipt</Icon>} color="secondary" variant="contained">Load Money</LoadingButton>
                                 </Box>
                             </Box>
                         </Box>

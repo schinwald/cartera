@@ -16,9 +16,15 @@ async function Submit(req, res, next) {
             res.status(500).send()
             next(error)
         })
-    
+
+    console.log("submitting...")
+    console.log(fetchedTransaction)
+
     if (fetchedTransaction.errors !== undefined) {
-        res.status(400).send()
+        res.status(400).send({
+            title: 'Unable to finalize transaction!',
+            messages: fetchedTransaction.errors.map(json => json.error)
+        })
         return
     }
 

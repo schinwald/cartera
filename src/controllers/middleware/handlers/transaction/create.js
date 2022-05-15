@@ -21,9 +21,15 @@ async function Create(req, res, next) {
             res.status(500).send()
             next(error)
         })
+
+    console.log("creating...")
+    console.log(fetchedTransaction)
     
     if (fetchedTransaction.errors !== undefined) {
-        res.status(400).send(fetchedTransaction.errors)
+        res.status(400).send({
+            title: 'Unable to create transaction!',
+            messages: fetchedTransaction.errors.map(json => json.error)
+        })
         return
     }
 

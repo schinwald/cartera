@@ -40,11 +40,11 @@ const CustomizedContainer = styled(Container)`
     z-index: 2;
     width: 2000px;
     height: 2000px;
-    opacity: 0.2;
+    opacity: 0.1;
     bottom: 50%;
     left: 50%;
     transform: scale(100%);
-    animation: animationBefore 120s linear infinite;
+    animation: animationBefore 180s linear infinite;
   }
 
   &::after {
@@ -54,11 +54,11 @@ const CustomizedContainer = styled(Container)`
     z-index: 2;
     width: 2000px;
     height: 2000px;
-    opacity: 0.1;
+    opacity: 0.05;
     bottom: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(50%) scale(300%);
-    animation: animationAfter 120s linear infinite;
+    animation: animationAfter 240s linear infinite;
   }
 
   & > * {
@@ -78,17 +78,16 @@ function App() {
 	if (wallets.data) {
 		for (let wallet of wallets.data) {
 			// consolidate balances to individual wallets
-			wallet.balance = wallet.addresses.map((address: AddressType) => address.balance)
-				.reduce((previous: any, current: any, index: number) => {
-					if (index === 0) return {...previous}
+			wallet.balance = wallet.addresses?.map((address: AddressType) => address.balance)
+				.reduce((previous: any, current: any) => {
 					return {
 						confirmed: previous.confirmed + current.confirmed,
 						pending: previous.pending + current.pending
 					}
-				})
+				}, { confirmed: 0, pending: 0 })
 
 			// consolidate transactions to individual wallets
-			wallet.transactions = wallet.addresses.map((address: AddressType) => {
+			wallet.transactions = wallet.addresses?.map((address: AddressType) => {
 					for (const transaction of address.transactions) {
 						for (const receiver of transaction.receivers) {
 							if (address.value === receiver.address.value) {
@@ -108,9 +107,8 @@ function App() {
 					return address.transactions
 				})
 				.reduce((previous: TransactionType[], current: TransactionType[], index: number) => {
-					if (index === 0) return [...previous];
 					return [...previous, ...current]
-        		})
+        		}, [])
 				.sort((a: TransactionType, b: TransactionType) => a.ref.localeCompare(b.ref))
 				.filter((transaction: TransactionType, index: number, transactions: TransactionType[]) => {
 					if (index === 0) return true
@@ -128,9 +126,8 @@ function App() {
 					}
 					return false
 				})
-
-			
 		}
+		console.log(wallets.data)
 	}
 
 	const onChangeActiveWallet = (index: number) => {
@@ -142,7 +139,17 @@ function App() {
 			await fetch('/wallet/create?' + new URLSearchParams({ alias: `My Wallet ${wallets.data.length + 1}` }), {
 					method: 'POST'
 				})
-				.then(response => mutate('/wallets'))
+				.then(response => {
+					const wallet = {
+						alias: `Processing...`
+					}
+					mutate('/wallets', async () => { wallets.data = [...wallets.data, wallet] }, {
+						optimisticData: [...wallets.data, wallet],
+						revalidate: true,
+						populateCache: false,
+						rollbackOnError: true
+					})
+				})
 				.catch(error => {
 					console.error(error)
 				})
@@ -154,7 +161,7 @@ function App() {
 			<CustomizedContainer maxWidth={false} disableGutters={true} sx={{ minHeight: '100vh', backgroundColor: 'primary.dark', padding: '3em 0' }}>
 				<Container maxWidth="lg">
 					<Navigation />
-					{wallets.data &&
+					{ wallets.data &&
 						<Dashboard
 							tabs={[
 								{ label: "Account" },
