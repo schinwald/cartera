@@ -127,7 +127,6 @@ function App() {
 					return false
 				})
 		}
-		console.log(wallets.data)
 	}
 
 	const onChangeActiveWallet = (index: number) => {

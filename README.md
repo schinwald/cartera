@@ -4,7 +4,7 @@
 
 A cryptocurrency wallet manager that streamlines transactions, removes barriers, and emphasizes transparency without compromising security. This is a proof of concept which was tested using the BlockCypher API on the BCY.test chain. Some of the key features include:
 - [x] Consolidates wallet addresses
-- [ ] Wallet alias renaming
+- [x] Wallet alias renaming
 - [x] Generates QR Codes for available wallet addresses
 - [x] Exchanging cryptocurrencies
 - [x] Transaction viewing

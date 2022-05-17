@@ -1,6 +1,6 @@
-import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button, Paper } from "@mui/material"
+import { Grid, Card, CardHeader, CardContent, Icon, Fab, Divider, Box, Typography, Chip, Button, Paper, TextField } from "@mui/material"
 import { styled } from "@mui/material"
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Copy, FancyCard } from "./primitives";
 import { WalletType, AddressType } from "../../types";
 import AnimatedNumber from "react-awesome-animated-number";
@@ -9,14 +9,22 @@ import fetch from 'isomorphic-fetch';
 import { QRCode } from ".";
 import { LoadingButton } from "@mui/lab";
 
+const RenameTypography = styled(TextField)`
+    & .MuiInputBase-input {
+        font-size: 1.5rem;
+        padding: 0;
+    }
+`
+
 type Props = {
     wallet?: WalletType;
 }
 
 export const Wallet: React.FC<Props> = (props) => {
     const { mutate } = useSWRConfig()
-    let [ editMode, setEditMode ] = useState<boolean>(false)
-    let [ loading, setLoading ] = useState<boolean>(false)
+    const [ editMode, setEditMode ] = useState<boolean>(false)
+    const [ loading, setLoading ] = useState<boolean>(false)
+    let inputRenameRef = useRef<HTMLInputElement>(null)
     let activeAddress: AddressType | null = null
 
     if (props.wallet) {
@@ -25,6 +33,36 @@ export const Wallet: React.FC<Props> = (props) => {
             if (previous.createdAt > current.createdAt) return previous
             else return current
         })
+    }
+
+    // resets edit mode when wallet changes
+    useEffect(() => {
+        setEditMode(false)
+    }, [props.wallet])
+
+    const renameWallet = async () => {
+        if (props.wallet === undefined) return
+        if (inputRenameRef === null || inputRenameRef.current === null) return
+
+        props.wallet.alias = inputRenameRef.current.value
+
+        await fetch('/wallet/rename', {
+                method: 'PUT',
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                body: JSON.stringify({
+                    wallet: {
+                        name: props.wallet.name,
+                        alias: inputRenameRef.current.value
+                    }
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                mutate('/wallets')
+            })
+            .catch(error => console.error(error))
     }
 
     const onLoadMoney = async (value: number) => {
@@ -60,13 +98,19 @@ export const Wallet: React.FC<Props> = (props) => {
                     { 
                         editMode
                         ?
-                        <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.wallet.alias}</Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: '0.5em',  alignItems: 'center' }}>
+                            <Icon fontSize="large">credit_card</Icon>
+                            <RenameTypography variant="standard" placeholder={props.wallet.alias} inputRef={inputRenameRef}></RenameTypography>
+                        </Box>
                         :
-                        <Typography variant="h5"><Icon fontSize="large" sx={{ verticalAlign: 'middle' }}>credit_card</Icon> {props.wallet.alias}</Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: '0.5em', alignItems: 'center' }}>
+                            <Icon fontSize="large">credit_card</Icon>
+                            <Typography variant="h5">{props.wallet.alias}</Typography>
+                        </Box>
                     }
                     <Fab color="secondary" size="small" onClick={() => {
                         if (editMode) {
-                            console.log("submit rename")
+                            renameWallet()
                         }
                         setEditMode(!editMode)
                     }}><Icon>{editMode ? "done" : "edit"}</Icon></Fab>
