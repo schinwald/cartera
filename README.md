@@ -8,10 +8,11 @@ A cryptocurrency wallet manager that streamlines transactions, removes barriers,
 - [x] Generates QR Codes for available wallet addresses
 - [x] Exchanging cryptocurrencies
 - [x] Transaction viewing
+- [ ] User authentication
 
 ## Preview
 
-None
+https://user-images.githubusercontent.com/5532419/170142203-bccea133-19e2-4f0c-81f2-214acfc223be.mp4
 
 ## Learning Outcomes
 
